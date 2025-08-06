@@ -17,10 +17,18 @@ export default function HomePage() {
   const { address, isConnected } = useAccount()
   const [activeTab, setActiveTab] = useState<'overview' | 'manage'>('overview')
   const [mounted, setMounted] = useState(false)
+  const [loadingTimeout, setLoadingTimeout] = useState(false)
 
   // Prevent hydration mismatch
   useEffect(() => {
     setMounted(true)
+    
+    // Set a timeout to show an error if loading takes too long
+    const timeout = setTimeout(() => {
+      setLoadingTimeout(true)
+    }, 10000) // 10 seconds
+    
+    return () => clearTimeout(timeout)
   }, [])
   
   const { 
@@ -42,9 +50,15 @@ export default function HomePage() {
       <div className="min-h-screen bg-gray-50">
         <Header />
         <div className="container mx-auto px-4 py-20">
-          <div className="flex items-center justify-center">
+          <div className="flex flex-col items-center justify-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
             <span className="ml-3 text-gray-600">Loading...</span>
+            {loadingTimeout && (
+              <div className="mt-4 text-center">
+                <p className="text-red-600 text-sm">Loading is taking longer than expected.</p>
+                <p className="text-gray-500 text-xs mt-1">Try refreshing the page or check your wallet connection.</p>
+              </div>
+            )}
           </div>
         </div>
       </div>

@@ -12,8 +12,8 @@ const projectId = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || 'demo-proj
 const metadata = {
   name: 'USDC Yield Optimizer',
   description: 'Optimize your USDC yield across Aave, Morpho, and Moonwell on Base',
-  url: 'https://usdc-yield-optimizer.vercel.app',
-  icons: ['https://usdc-yield-optimizer.vercel.app/logo.png']
+  url: 'https://nihar-yeild-optimizer.vercel.app',
+  icons: ['https://nihar-yeild-optimizer.vercel.app/logo.png']
 }
 
 // Put Base Sepolia first to make it the default for our testnet deployment
@@ -28,7 +28,13 @@ const wagmiConfig = defaultWagmiConfig({
 })
 
 // 3. Create query client
-const queryClient = new QueryClient()
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+    },
+  },
+})
 
 // 4. Create modal
 createWeb3Modal({ 

@@ -138,7 +138,7 @@ export function DepositWithdraw({ userBalance, vaultTotalAssets }: DepositWithdr
     parseFloat(formatUnits(usdcBalance, 6)) : 0
   
   // Debug logging (only once)
-  if (address && usdcBalance && !window.debugLogged) {
+  if (address && usdcBalance && !(window as any).debugLogged) {
     console.log('DepositWithdraw Debug:', {
       address,
       USDC_ADDRESS,
@@ -146,8 +146,8 @@ export function DepositWithdraw({ userBalance, vaultTotalAssets }: DepositWithdr
       usdcBalance: usdcBalance?.toString(),
       usdcBalanceFormatted,
       allowance: allowance?.toString(),
-    })
-    window.debugLogged = true
+    });
+    (window as any).debugLogged = true
   }
 
   const maxAmount = mode === 'deposit' ? usdcBalanceFormatted : userBalance

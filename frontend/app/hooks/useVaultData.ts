@@ -93,7 +93,7 @@ export function useVaultData(userAddress?: `0x${string}`) {
   }
 
   // Debug logging (only once per user)
-  if (userAddress && contractData && !window.vaultDebugLogged) {
+  if (userAddress && contractData && !(window as any).vaultDebugLogged) {
     console.log('🏦 Vault Data Debug:', {
       vaultAddress: VAULT_ADDRESS,
       userAddress,
@@ -102,8 +102,8 @@ export function useVaultData(userAddress?: `0x${string}`) {
       yieldEarnedRaw: contractData[2]?.result?.toString(),
       principalDepositedRaw: contractData[3]?.result?.toString(),
       processed: processedData
-    })
-    window.vaultDebugLogged = true
+    });
+    (window as any).vaultDebugLogged = true
   }
 
   // Convert shares to USDC balance

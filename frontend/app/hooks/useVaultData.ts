@@ -6,6 +6,30 @@ import { ethers } from 'ethers'
 
 const VAULT_ADDRESS = '0x9094E827F56c1a19666B9D33790bFf0678868685' as `0x${string}` // New fixed vault
 
+// Helper function to safely format units
+const safeFormatUnits = (value: any, decimals: number): number => {
+  if (!value || value === '0x' || value === '' || typeof value === 'object') {
+    return 0
+  }
+  try {
+    return parseFloat(ethers.formatUnits(value, decimals))
+  } catch {
+    return 0
+  }
+}
+
+// Helper function to safely get BigInt value for contract args
+const safeBigInt = (value: any): bigint => {
+  if (!value || value === '0x' || value === '' || typeof value === 'object') {
+    return BigInt(0)
+  }
+  try {
+    return BigInt(value)
+  } catch {
+    return BigInt(0)
+  }
+}
+
 const vaultABI = [
   {
     inputs: [{ name: 'account', type: 'address' }],
@@ -79,17 +103,13 @@ export function useVaultData(userAddress?: `0x${string}`) {
   })
 
   const processedData = {
-    totalAssets: contractData?.[0]?.result ? 
-      parseFloat(ethers.formatUnits(contractData[0].result, 6)) : 0, // USDC has 6 decimals
+    totalAssets: safeFormatUnits(contractData?.[0]?.result, 6), // USDC has 6 decimals
     
-    shareBalance: userAddress && contractData?.[1]?.result ? 
-      parseFloat(ethers.formatUnits(contractData[1].result, 18)) : 0, // Vault shares have 18 decimals
+    shareBalance: userAddress ? safeFormatUnits(contractData?.[1]?.result, 18) : 0, // Vault shares have 18 decimals
     
-    yieldEarned: userAddress && contractData?.[2]?.result ? 
-      parseFloat(ethers.formatUnits(contractData[2].result, 6)) : 0,
+    yieldEarned: userAddress ? safeFormatUnits(contractData?.[2]?.result, 6) : 0,
     
-    principalDeposited: userAddress && contractData?.[3]?.result ? 
-      parseFloat(ethers.formatUnits(contractData[3].result, 6)) : 0,
+    principalDeposited: userAddress ? safeFormatUnits(contractData?.[3]?.result, 6) : 0,
   }
 
   // Debug logging (only once per user)
@@ -111,14 +131,12 @@ export function useVaultData(userAddress?: `0x${string}`) {
     address: VAULT_ADDRESS,
     abi: vaultABI,
     functionName: 'convertToAssets',
-    args: [contractData?.[1]?.result || BigInt(0)],
+    args: [safeBigInt(contractData?.[1]?.result)],
     enabled: !!userAddress && !!contractData?.[1]?.result,
     watch: true,
   })
 
-  const balance = assetBalance ? 
-    parseFloat(ethers.formatUnits(assetBalance, 6)) : 
-    processedData.shareBalance
+  const balance = safeFormatUnits(assetBalance, 6) || processedData.shareBalance
 
   return {
     balance,

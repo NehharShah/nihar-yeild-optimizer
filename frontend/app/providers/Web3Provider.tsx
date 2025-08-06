@@ -2,6 +2,7 @@
 
 import { createWeb3Modal, defaultWagmiConfig } from '@web3modal/wagmi/react'
 import { WagmiConfig } from 'wagmi'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { base, baseSepolia } from 'wagmi/chains'
 
 // 1. Get projectId from WalletConnect Cloud
@@ -26,7 +27,10 @@ const wagmiConfig = defaultWagmiConfig({
   enableCoinbase: true,
 })
 
-// 3. Create modal
+// 3. Create query client
+const queryClient = new QueryClient()
+
+// 4. Create modal
 createWeb3Modal({ 
   wagmiConfig, 
   projectId, 
@@ -34,14 +38,15 @@ createWeb3Modal({
   themeMode: 'light',
   themeVariables: {
     '--w3m-accent': '#3b82f6',
-    '--w3m-background': '#ffffff',
   }
 })
 
 export function Web3Provider({ children }: { children: React.ReactNode }) {
   return (
-    <WagmiConfig config={wagmiConfig}>
-      {children}
-    </WagmiConfig>
+    <QueryClientProvider client={queryClient}>
+      <WagmiConfig config={wagmiConfig as any}>
+        {children}
+      </WagmiConfig>
+    </QueryClientProvider>
   )
 }

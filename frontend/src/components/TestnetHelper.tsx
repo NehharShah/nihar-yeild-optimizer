@@ -1,17 +1,27 @@
 'use client';
 
 import { useState } from 'react';
-import { useAccount, useBalance, useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
+import { useAccount, useBalance, useContractWrite, useWaitForTransaction, useNetwork } from 'wagmi';
 import { parseUnits, formatUnits } from 'viem';
-import { CONTRACTS, USDC_ABI } from '@/lib/config';
+// Contract addresses
+const CONTRACTS = {
+  VAULT_ADDRESS: '0x9094E827F56c1a19666B9D33790bFf0678868685',
+  USDC_ADDRESS: '0x036CbD53842c5426634e7929541eC2318f3dCF7e'
+};
 
 export default function TestnetHelper() {
-  const { address, isConnected, chain } = useAccount();
-  const [mintAmount, setMintAmount] = useState('100');
+  const { address, isConnected } = useAccount();
+  const { chain } = useNetwork();
+  const [mintAmount, _setMintAmount] = useState('100');
+  const [txHash, setTxHash] = useState<`0x${string}` | undefined>();
   
-  const { writeContract, data: hash, isPending } = useWriteContract();
-  const { isLoading: isConfirming, isSuccess } = useWaitForTransactionReceipt({
-    hash,
+  const { write: _writeContract, isLoading: _isPending } = useContractWrite({
+    onSuccess(data) {
+      setTxHash(data.hash);
+    },
+  });
+  const { isLoading: _isConfirming, isSuccess: _isSuccess } = useWaitForTransaction({
+    hash: txHash,
   });
 
   // Get USDC balance
@@ -80,7 +90,7 @@ export default function TestnetHelper() {
           <p>USDC: {usdcBalance ? formatUnits(usdcBalance.value, 6) : '0'} USDC</p>
         </div>
         
-        {!ethBalance || ethBalance.value === 0n && (
+        {!ethBalance || ethBalance.value === BigInt(0) && (
           <div className="mt-2 p-2 bg-red-100 border border-red-200 rounded text-sm text-red-700">
             ⚠️ You need testnet ETH first. Get some from a Base Sepolia faucet.
           </div>

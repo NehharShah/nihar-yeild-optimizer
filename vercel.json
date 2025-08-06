@@ -1,7 +1,18 @@
 {
-  "buildCommand": "cd frontend && npm install --legacy-peer-deps && npm run build",
-  "outputDirectory": "frontend/.next",
-  "installCommand": "echo 'Installing in build step'",
+  "version": 2,
+  "builds": [
+    {
+      "src": "frontend/package.json",
+      "use": "@vercel/next"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "frontend/$1"
+    }
+  ],
+  "installCommand": "cd frontend && npm install --legacy-peer-deps",
   "env": {
     "NEXT_PUBLIC_VAULT_ADDRESS": "0x9094E827F56c1a19666B9D33790bFf0678868685",
     "NEXT_PUBLIC_RPC_URL": "https://sepolia.base.org",

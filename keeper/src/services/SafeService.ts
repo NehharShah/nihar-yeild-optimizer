@@ -19,8 +19,8 @@ export class SafeService {
     private signer: ethers.Wallet
   ) {
     this.ethAdapter = new EthersAdapter({
-      ethers,
-      signerOrProvider: this.signer
+      ethers: ethers as any,
+      signerOrProvider: this.signer as any
     });
   }
 
@@ -105,7 +105,7 @@ export class SafeService {
           safeTransactionData: safeTransaction.data,
           safeTxHash,
           senderAddress: await this.signer.getAddress(),
-          senderSignature: senderSignature.data,
+          senderSignature: senderSignature.data as unknown as string,
         });
 
         logger.info('Transaction proposed successfully');

@@ -1,0 +1,18 @@
+{
+  "name": "usdc-yield-optimizer",
+  "version": "1.0.0",
+  "description": "USDC yield optimizer on Base with account abstraction",
+  "main": "index.js",
+  "scripts": {
+    "install:all": "npm install && cd contracts && npm install && cd ../keeper && npm install && cd ../frontend && npm install",
+    "build:contracts": "cd contracts && npm run compile",
+    "test:contracts": "cd contracts && npm test",
+    "start:keeper": "cd keeper && npm start",
+    "dev:frontend": "cd frontend && npm run dev",
+    "build:frontend": "cd frontend && npm run build"
+  },
+  "keywords": ["defi", "yield", "base", "account-abstraction", "erc4626"],
+  "author": "YO Assignment",
+  "license": "MIT",
+  "workspaces": ["contracts", "keeper", "frontend"]
+}

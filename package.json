@@ -9,10 +9,10 @@
     "test:contracts": "cd contracts && npm test",
     "start:keeper": "cd keeper && npm start",
     "dev:frontend": "cd frontend && npm run dev",
-    "build:frontend": "cd frontend && npm run build"
+    "build:frontend": "cd frontend && npm run build",
+    "vercel-build": "cd frontend && npm install --legacy-peer-deps && npm run build"
   },
   "keywords": ["defi", "yield", "base", "account-abstraction", "erc4626"],
   "author": "YO Assignment",
-  "license": "MIT",
-  "workspaces": ["contracts", "keeper", "frontend"]
+  "license": "MIT"
 }

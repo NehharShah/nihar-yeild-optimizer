@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "buildCommand": "npm run vercel-build",
+  "outputDirectory": "frontend/.next",
+  "installCommand": "echo 'Skipping root install to avoid workspace conflicts'",
+  "env": {
+    "NEXT_PUBLIC_VAULT_ADDRESS": "0x9094E827F56c1a19666B9D33790bFf0678868685",
+    "NEXT_PUBLIC_RPC_URL": "https://sepolia.base.org",
+    "NEXT_PUBLIC_CHAIN_ID": "84532"
+  }
+}

@@ -1,7 +1,7 @@
 {
   "buildCommand": "npm run build",
   "outputDirectory": "frontend/.next", 
-  "installCommand": "npm install --legacy-peer-deps",
+  "installCommand": "echo 'Dependencies installed in build step'",
   "env": {
     "NEXT_PUBLIC_VAULT_ADDRESS": "0x9094E827F56c1a19666B9D33790bFf0678868685",
     "NEXT_PUBLIC_RPC_URL": "https://sepolia.base.org",

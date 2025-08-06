@@ -5,18 +5,26 @@ import { WagmiConfig } from 'wagmi'
 import { base, baseSepolia } from 'wagmi/chains'
 
 // 1. Get projectId from WalletConnect Cloud
-const projectId = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || 'your-project-id'
+const projectId = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || 'demo-project-id'
 
-// 2. Create wagmiConfig
+// 2. Create wagmiConfig - prioritize Base Sepolia for testnet deployment
 const metadata = {
   name: 'USDC Yield Optimizer',
-  description: 'Optimize your USDC yield across multiple protocols',
-  url: 'https://your-domain.com',
-  icons: ['https://your-domain.com/logo.png']
+  description: 'Optimize your USDC yield across Aave, Morpho, and Moonwell on Base',
+  url: 'https://usdc-yield-optimizer.vercel.app',
+  icons: ['https://usdc-yield-optimizer.vercel.app/logo.png']
 }
 
-const chains = [base, baseSepolia]
-const wagmiConfig = defaultWagmiConfig({ chains, projectId, metadata })
+// Put Base Sepolia first to make it the default for our testnet deployment
+const chains = [baseSepolia, base]
+const wagmiConfig = defaultWagmiConfig({ 
+  chains, 
+  projectId, 
+  metadata,
+  enableWalletConnect: true,
+  enableInjected: true,
+  enableCoinbase: true,
+})
 
 // 3. Create modal
 createWeb3Modal({ 

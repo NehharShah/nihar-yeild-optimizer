@@ -49,7 +49,7 @@ interface IMorpho {
 }
 
 interface IIrm {
-    function borrowRate(MarketParams memory marketParams, Market memory market) external view returns (uint256);
+    function borrowRate(IMorpho.MarketParams memory marketParams, IMorpho.Market memory market) external view returns (uint256);
 }
 
 /**
@@ -93,7 +93,7 @@ contract MorphoAdapter is IProtocolAdapter, Ownable {
         marketId = keccak256(abi.encode(_marketParams));
         
         // Approve max to Morpho
-        USDC.safeApprove(address(MORPHO), type(uint256).max);
+        USDC.approve(address(MORPHO), type(uint256).max);
     }
 
     modifier onlyVault() {
@@ -103,7 +103,7 @@ contract MorphoAdapter is IProtocolAdapter, Ownable {
 
     /// @notice Deposit USDC to Morpho Blue
     function deposit(uint256 amount) external override onlyVault {
-        USDC.safeTransferFrom(vault, address(this), amount);
+        USDC.transferFrom(vault, address(this), amount);
         
         // Supply to Morpho Blue market
         MORPHO.supply(

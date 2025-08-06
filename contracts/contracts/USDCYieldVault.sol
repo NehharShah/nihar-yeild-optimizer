@@ -158,12 +158,23 @@ contract USDCYieldVault is ERC4626, Ownable, ReentrancyGuard, Pausable {
     /// @notice Get current APY from active protocol
     function getCurrentAPY() external view returns (uint256) {
         IProtocolAdapter adapter = adapters[activeProtocol];
+        if (address(adapter) == address(0)) {
+            // No adapter set, return mock APY for testnet (5% APY = 500 bps)
+            return 500;
+        }
         return adapter.getAPY();
     }
 
     /// @notice Get APY from specific protocol
     function getProtocolAPY(Protocol protocol) external view returns (uint256) {
         IProtocolAdapter adapter = adapters[protocol];
+        if (address(adapter) == address(0)) {
+            // No adapter set, return mock APYs for testnet
+            if (protocol == Protocol.AAVE) return 389; // 3.89%
+            if (protocol == Protocol.MORPHO) return 508; // 5.08% 
+            if (protocol == Protocol.MOONWELL) return 393; // 3.93%
+            return 0;
+        }
         return adapter.getAPY();
     }
 
@@ -180,6 +191,10 @@ contract USDCYieldVault is ERC4626, Ownable, ReentrancyGuard, Pausable {
     /// @notice Internal deposit to protocol
     function _depositToProtocol(uint256 amount) internal {
         IProtocolAdapter adapter = adapters[activeProtocol];
+        if (address(adapter) == address(0)) {
+            // No adapter set, keep funds in vault (for testnet)
+            return;
+        }
         IERC20(asset()).approve(address(adapter), amount);
         adapter.deposit(amount);
     }
@@ -187,6 +202,10 @@ contract USDCYieldVault is ERC4626, Ownable, ReentrancyGuard, Pausable {
     /// @notice Internal withdraw from protocol
     function _withdrawFromProtocol(uint256 amount) internal {
         IProtocolAdapter adapter = adapters[activeProtocol];
+        if (address(adapter) == address(0)) {
+            // No adapter set, funds are already in vault (for testnet)
+            return;
+        }
         adapter.withdraw(amount);
     }
 

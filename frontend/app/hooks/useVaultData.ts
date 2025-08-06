@@ -4,14 +4,44 @@ import { useContractRead, useContractReads } from 'wagmi'
 import { useQuery } from '@tanstack/react-query'
 import { ethers } from 'ethers'
 
-const VAULT_ADDRESS = process.env.NEXT_PUBLIC_VAULT_ADDRESS as `0x${string}`
+const VAULT_ADDRESS = '0x9094E827F56c1a19666B9D33790bFf0678868685' as `0x${string}` // New fixed vault
 
 const vaultABI = [
-  'function balanceOf(address) view returns (uint256)',
-  'function convertToAssets(uint256) view returns (uint256)',
-  'function totalAssets() view returns (uint256)',
-  'function principalDeposited(address) view returns (uint256)',
-  'function getYieldEarned(address) view returns (uint256)',
+  {
+    inputs: [{ name: 'account', type: 'address' }],
+    name: 'balanceOf',
+    outputs: [{ name: '', type: 'uint256' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [{ name: 'shares', type: 'uint256' }],
+    name: 'convertToAssets',
+    outputs: [{ name: '', type: 'uint256' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'totalAssets',
+    outputs: [{ name: '', type: 'uint256' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [{ name: 'user', type: 'address' }],
+    name: 'principalDeposited',
+    outputs: [{ name: '', type: 'uint256' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [{ name: 'user', type: 'address' }],
+    name: 'getYieldEarned',
+    outputs: [{ name: '', type: 'uint256' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
 ] as const
 
 export function useVaultData(userAddress?: `0x${string}`) {
@@ -60,6 +90,20 @@ export function useVaultData(userAddress?: `0x${string}`) {
     
     principalDeposited: userAddress && contractData?.[3]?.result ? 
       parseFloat(ethers.formatUnits(contractData[3].result, 6)) : 0,
+  }
+
+  // Debug logging (only once per user)
+  if (userAddress && contractData && !window.vaultDebugLogged) {
+    console.log('🏦 Vault Data Debug:', {
+      vaultAddress: VAULT_ADDRESS,
+      userAddress,
+      totalAssetsRaw: contractData[0]?.result?.toString(),
+      shareBalanceRaw: contractData[1]?.result?.toString(),
+      yieldEarnedRaw: contractData[2]?.result?.toString(),
+      principalDepositedRaw: contractData[3]?.result?.toString(),
+      processed: processedData
+    })
+    window.vaultDebugLogged = true
   }
 
   // Convert shares to USDC balance

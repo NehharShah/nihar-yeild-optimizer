@@ -6,7 +6,7 @@
   "scripts": {
     "compile": "hardhat compile",
     "test": "hardhat test",
-    "deploy": "hardhat run scripts/deploy.ts --network base-sepolia",
+    "deploy": "hardhat run scripts/deploy.ts --network baseSepolia",
     "verify": "hardhat verify"
   },
   "devDependencies": {
@@ -14,7 +14,6 @@
     "@nomicfoundation/hardhat-verify": "^2.0.0",
     "@openzeppelin/contracts": "^5.0.0",
     "@safe-global/safe-contracts": "^1.4.1",
-    "@safe-global/safe-4337-module": "^0.3.0",
     "hardhat": "^2.19.0",
     "typescript": "^5.0.0"
   },

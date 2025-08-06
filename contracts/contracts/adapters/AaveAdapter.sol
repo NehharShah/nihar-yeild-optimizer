@@ -69,7 +69,7 @@ contract AaveAdapter is IProtocolAdapter, Ownable {
         aUSDC = IAToken(reserveData.aTokenAddress);
         
         // Approve max to Aave pool
-        USDC.safeApprove(address(AAVE_POOL), type(uint256).max);
+        USDC.approve(address(AAVE_POOL), type(uint256).max);
     }
 
     modifier onlyVault() {
@@ -79,7 +79,7 @@ contract AaveAdapter is IProtocolAdapter, Ownable {
 
     /// @notice Deposit USDC to Aave
     function deposit(uint256 amount) external override onlyVault {
-        USDC.safeTransferFrom(vault, address(this), amount);
+        USDC.transferFrom(vault, address(this), amount);
         AAVE_POOL.supply(address(USDC), amount, address(this), 0);
     }
 

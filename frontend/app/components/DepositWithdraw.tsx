@@ -5,20 +5,75 @@ import { useAccount, useContractWrite, useContractRead } from 'wagmi'
 import { parseUnits, formatUnits } from 'ethers'
 import { ArrowDownCircle, ArrowUpCircle, Loader2, AlertCircle } from 'lucide-react'
 
-const VAULT_ADDRESS = process.env.NEXT_PUBLIC_VAULT_ADDRESS as `0x${string}`
-const USDC_ADDRESS = '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913' as `0x${string}` // USDC on Base
+const VAULT_ADDRESS = '0x9094E827F56c1a19666B9D33790bFf0678868685' as `0x${string}` // New fixed vault
+const USDC_ADDRESS = '0x036CbD53842c5426634e7929541eC2318f3dCF7e' as `0x${string}` // USDC on Base Sepolia
 
 const vaultABI = [
-  'function deposit(uint256 assets, address receiver) returns (uint256)',
-  'function withdraw(uint256 assets, address receiver, address owner) returns (uint256)',
-  'function previewDeposit(uint256 assets) view returns (uint256)',
-  'function previewWithdraw(uint256 assets) view returns (uint256)',
+  {
+    inputs: [
+      { name: 'assets', type: 'uint256' },
+      { name: 'receiver', type: 'address' }
+    ],
+    name: 'deposit',
+    outputs: [{ name: '', type: 'uint256' }],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      { name: 'assets', type: 'uint256' },
+      { name: 'receiver', type: 'address' },
+      { name: 'owner', type: 'address' }
+    ],
+    name: 'withdraw',
+    outputs: [{ name: '', type: 'uint256' }],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [{ name: 'assets', type: 'uint256' }],
+    name: 'previewDeposit',
+    outputs: [{ name: '', type: 'uint256' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [{ name: 'assets', type: 'uint256' }],
+    name: 'previewWithdraw',
+    outputs: [{ name: '', type: 'uint256' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
 ] as const
 
 const usdcABI = [
-  'function balanceOf(address) view returns (uint256)',
-  'function approve(address spender, uint256 amount) returns (bool)',
-  'function allowance(address owner, address spender) view returns (uint256)',
+  {
+    inputs: [{ name: 'account', type: 'address' }],
+    name: 'balanceOf',
+    outputs: [{ name: '', type: 'uint256' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [
+      { name: 'spender', type: 'address' },
+      { name: 'amount', type: 'uint256' }
+    ],
+    name: 'approve',
+    outputs: [{ name: '', type: 'bool' }],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      { name: 'owner', type: 'address' },
+      { name: 'spender', type: 'address' }
+    ],
+    name: 'allowance',
+    outputs: [{ name: '', type: 'uint256' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
 ] as const
 
 interface DepositWithdrawProps {
@@ -81,6 +136,19 @@ export function DepositWithdraw({ userBalance, vaultTotalAssets }: DepositWithdr
 
   const usdcBalanceFormatted = usdcBalance ? 
     parseFloat(formatUnits(usdcBalance, 6)) : 0
+  
+  // Debug logging (only once)
+  if (address && usdcBalance && !window.debugLogged) {
+    console.log('DepositWithdraw Debug:', {
+      address,
+      USDC_ADDRESS,
+      VAULT_ADDRESS,
+      usdcBalance: usdcBalance?.toString(),
+      usdcBalanceFormatted,
+      allowance: allowance?.toString(),
+    })
+    window.debugLogged = true
+  }
 
   const maxAmount = mode === 'deposit' ? usdcBalanceFormatted : userBalance
   const amountNum = parseFloat(amount) || 0
@@ -116,9 +184,30 @@ export function DepositWithdraw({ userBalance, vaultTotalAssets }: DepositWithdr
 
       setAmount('')
       alert(`${mode === 'deposit' ? 'Deposit' : 'Withdrawal'} successful!`)
-    } catch (error) {
+    } catch (error: any) {
       console.error('Transaction failed:', error)
-      alert(`Transaction failed: ${error instanceof Error ? error.message : 'Unknown error'}`)
+      
+      // Extract more detailed error information
+      let errorMessage = 'Unknown error'
+      if (error?.reason) {
+        errorMessage = error.reason
+      } else if (error?.message) {
+        errorMessage = error.message
+      } else if (error?.error?.message) {
+        errorMessage = error.error.message
+      } else if (typeof error === 'string') {
+        errorMessage = error
+      }
+      
+      console.log('Detailed error:', {
+        reason: error?.reason,
+        message: error?.message,
+        code: error?.code,
+        data: error?.data,
+        fullError: error
+      })
+      
+      alert(`Transaction failed: ${errorMessage}`)
     }
     setIsProcessing(false)
   }

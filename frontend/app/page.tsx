@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useAccount } from 'wagmi'
 import { Header } from './components/Header'
 import { APYTable } from './components/APYTable'
@@ -9,12 +9,19 @@ import { YieldChart } from './components/YieldChart'
 import { DepositWithdraw } from './components/DepositWithdraw'
 import { AutoYieldToggle } from './components/AutoYieldToggle'
 import { ConnectWallet } from './components/ConnectWallet'
+
 import { useVaultData } from './hooks/useVaultData'
 import { useAPYData } from './hooks/useAPYData'
 
 export default function HomePage() {
   const { address, isConnected } = useAccount()
   const [activeTab, setActiveTab] = useState<'overview' | 'manage'>('overview')
+  const [mounted, setMounted] = useState(false)
+
+  // Prevent hydration mismatch
+  useEffect(() => {
+    setMounted(true)
+  }, [])
   
   const { 
     balance,
@@ -29,6 +36,21 @@ export default function HomePage() {
     isLoading: apyLoading 
   } = useAPYData()
 
+  // Show loading state during hydration
+  if (!mounted) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <Header />
+        <div className="container mx-auto px-4 py-20">
+          <div className="flex items-center justify-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            <span className="ml-3 text-gray-600">Loading...</span>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   if (!isConnected) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50">
@@ -39,7 +61,7 @@ export default function HomePage() {
               USDC Yield Optimizer
             </h1>
             <p className="text-xl text-gray-600 mb-12 leading-relaxed">
-              Automatically optimize your USDC yield across Aave, Morpho, and Moonwell on Base.
+              Automatically optimize your USDC yield across Aave, Morpho, and Moonwell on Base Sepolia.
               Connect your wallet to get started.
             </p>
             <ConnectWallet />

@@ -52,7 +52,7 @@ contract MoonwellAdapter is IProtocolAdapter, Ownable {
         vault = _vault;
         
         // Approve max to mUSDC
-        USDC.safeApprove(address(mUSDC), type(uint256).max);
+        USDC.approve(address(mUSDC), type(uint256).max);
         
         // Enter market for this adapter
         address[] memory markets = new address[](1);
@@ -67,7 +67,7 @@ contract MoonwellAdapter is IProtocolAdapter, Ownable {
 
     /// @notice Deposit USDC to Moonwell
     function deposit(uint256 amount) external override onlyVault {
-        USDC.safeTransferFrom(vault, address(this), amount);
+        USDC.transferFrom(vault, address(this), amount);
         
         // Mint mUSDC tokens
         uint256 result = mUSDC.mint(amount);
@@ -81,7 +81,7 @@ contract MoonwellAdapter is IProtocolAdapter, Ownable {
         require(result == 0, "Moonwell redeem failed");
         
         // Transfer USDC to vault
-        USDC.safeTransfer(vault, amount);
+        USDC.transfer(vault, amount);
     }
 
     /// @notice Get USDC balance (underlying value of mUSDC held)
@@ -121,7 +121,7 @@ contract MoonwellAdapter is IProtocolAdapter, Ownable {
             // Transfer all USDC to vault
             uint256 usdcBalance = USDC.balanceOf(address(this));
             if (usdcBalance > 0) {
-                USDC.safeTransfer(vault, usdcBalance);
+                USDC.transfer(vault, usdcBalance);
             }
         }
     }

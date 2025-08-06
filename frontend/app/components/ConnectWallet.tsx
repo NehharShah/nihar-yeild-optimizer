@@ -13,9 +13,28 @@ export function ConnectWallet() {
           <h2 className="text-2xl font-semibold text-gray-900 mb-2">
             Connect Your Wallet
           </h2>
-          <p className="text-gray-600">
-            Start optimizing your USDC yield today
+          <p className="text-gray-600 mb-4">
+            Start optimizing your USDC yield on Base Sepolia testnet
           </p>
+          
+          {/* Testnet Notice */}
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+            <div className="flex items-center justify-center space-x-2 mb-2">
+              <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+              <span className="text-sm font-medium text-blue-900">Base Sepolia Testnet</span>
+            </div>
+            <p className="text-sm text-blue-800">
+              🧪 This is a testnet deployment. Get free Base Sepolia ETH from{' '}
+              <a 
+                href="https://portal.cdp.coinbase.com/products/faucet" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="underline hover:text-blue-900"
+              >
+                Coinbase Faucet
+              </a>
+            </p>
+          </div>
         </div>
 
         <div className="flex justify-center">

@@ -2,10 +2,17 @@
 
 import { useAccount, useDisconnect } from 'wagmi'
 import { Wallet, LogOut, TrendingUp } from 'lucide-react'
+import { useEffect, useState } from 'react'
 
 export function Header() {
   const { address, isConnected } = useAccount()
   const { disconnect } = useDisconnect()
+  const [mounted, setMounted] = useState(false)
+
+  // Prevent hydration mismatch by only showing wallet UI after mount
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   const formatAddress = (addr: string) => {
     return `${addr.slice(0, 6)}...${addr.slice(-4)}`
@@ -27,31 +34,36 @@ export function Header() {
           </div>
 
           {/* Wallet Connection */}
-          {isConnected ? (
-            <div className="flex items-center space-x-4">
-              <div className="flex items-center space-x-2 bg-gray-50 px-4 py-2 rounded-lg">
-                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                <span className="text-sm font-medium text-gray-700">
-                  Connected to Base
-                </span>
+          {mounted ? (
+            isConnected ? (
+              <div className="flex items-center space-x-4">
+                <div className="flex items-center space-x-2 bg-blue-50 px-4 py-2 rounded-lg border border-blue-200">
+                  <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+                  <span className="text-sm font-medium text-blue-700">
+                    Base Sepolia Testnet
+                  </span>
+                </div>
+                
+                <div className="flex items-center space-x-3 bg-primary-50 px-4 py-2 rounded-lg">
+                  <Wallet className="w-4 h-4 text-primary-600" />
+                  <span className="font-mono text-sm text-primary-700">
+                    {formatAddress(address!)}
+                  </span>
+                  <button
+                    onClick={() => disconnect()}
+                    className="p-1 hover:bg-primary-100 rounded transition-colors"
+                    title="Disconnect"
+                  >
+                    <LogOut className="w-4 h-4 text-primary-600" />
+                  </button>
+                </div>
               </div>
-              
-              <div className="flex items-center space-x-3 bg-primary-50 px-4 py-2 rounded-lg">
-                <Wallet className="w-4 h-4 text-primary-600" />
-                <span className="font-mono text-sm text-primary-700">
-                  {formatAddress(address!)}
-                </span>
-                <button
-                  onClick={() => disconnect()}
-                  className="p-1 hover:bg-primary-100 rounded transition-colors"
-                  title="Disconnect"
-                >
-                  <LogOut className="w-4 h-4 text-primary-600" />
-                </button>
-              </div>
-            </div>
+            ) : (
+              <w3m-button />
+            )
           ) : (
-            <w3m-button />
+            // Loading placeholder to prevent layout shift
+            <div className="w-32 h-10 bg-gray-200 rounded-lg animate-pulse"></div>
           )}
         </div>
       </div>

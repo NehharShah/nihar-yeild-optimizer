@@ -8,11 +8,16 @@
     "build:contracts": "cd contracts && npm run compile",
     "test:contracts": "cd contracts && npm test",
     "start:keeper": "cd keeper && npm start",
-    "dev:frontend": "cd frontend && npm run dev",
-    "build:frontend": "cd frontend && npm run build",
-    "vercel-build": "cd frontend && npm install --legacy-peer-deps && npm run build"
+    "dev": "cd frontend && npm run dev",
+    "build": "cd frontend && npm install --legacy-peer-deps && npm run build",
+    "start": "cd frontend && npm start"
   },
   "keywords": ["defi", "yield", "base", "account-abstraction", "erc4626"],
   "author": "YO Assignment",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "next": "14.0.0",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0"
+  }
 }

@@ -1,9 +1,7 @@
 {
-  "version": 2,
-  "buildCommand": "npm install --legacy-peer-deps && npm run build",
-  "outputDirectory": ".next",
+  "buildCommand": "npm run build",
+  "outputDirectory": "frontend/.next", 
   "installCommand": "npm install --legacy-peer-deps",
-  "rootDirectory": "frontend",
   "env": {
     "NEXT_PUBLIC_VAULT_ADDRESS": "0x9094E827F56c1a19666B9D33790bFf0678868685",
     "NEXT_PUBLIC_RPC_URL": "https://sepolia.base.org",

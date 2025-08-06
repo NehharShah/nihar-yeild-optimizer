@@ -7,8 +7,20 @@ import { APYData } from '../components/APYTable'
 const VAULT_ADDRESS = process.env.NEXT_PUBLIC_VAULT_ADDRESS as `0x${string}`
 
 const vaultABI = [
-  'function getProtocolAPY(uint8) view returns (uint256)',
-  'function activeProtocol() view returns (uint8)',
+  {
+    inputs: [{ name: 'protocol', type: 'uint8' }],
+    name: 'getProtocolAPY',
+    outputs: [{ name: '', type: 'uint256' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'activeProtocol',
+    outputs: [{ name: '', type: 'uint8' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
 ] as const
 
 export function useAPYData() {

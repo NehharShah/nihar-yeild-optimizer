@@ -128,7 +128,7 @@ contract USDCYieldVault is ERC4626, Ownable, ReentrancyGuard, Pausable {
         Protocol targetProtocol, 
         uint256 expectedGain,
         uint256 gasCost
-    ) external nonReentrant whenNotPaused {
+    ) external onlyOwner nonReentrant whenNotPaused {
         // Validate rebalance conditions
         if (expectedGain < MIN_REBALANCE_THRESHOLD) revert InsufficientYieldGain();
         if (gasCost > MAX_GAS_COST_THRESHOLD) revert GasCostTooHigh();

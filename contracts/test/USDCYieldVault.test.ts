@@ -185,8 +185,13 @@ describe("USDCYieldVault", function () {
     });
 
     it("Should only allow authorized users to rebalance", async function () {
-      const { vault, user1 } = await loadFixture(deployVaultFixture);
+      const { vault, usdc, user1, depositAmount } = await loadFixture(deployVaultFixture);
 
+      // First deposit some funds so rebalance has something to work with
+      await usdc.connect(user1).approve(await vault.getAddress(), depositAmount);
+      await vault.connect(user1).deposit(depositAmount, user1.address);
+
+      // Now test that non-owner cannot rebalance
       await expect(
         vault.connect(user1).rebalance(1, 50, 5)
       ).to.be.revertedWithCustomError(vault, "OwnableUnauthorizedAccount");
@@ -213,25 +218,3 @@ describe("USDCYieldVault", function () {
     });
   });
 });
-
-// Mock contracts for testing
-
-contract MockERC20 {
-  constructor(string memory name, string memory symbol, uint8 decimals) {
-    // ERC20 implementation with mint function
-  }
-  
-  function mint(address to, uint256 amount) external {
-    // Mint tokens to address
-  }
-}
-
-contract MockProtocolAdapter {
-  constructor(address asset, string memory name, uint256 initialAPY) {
-    // Mock adapter implementation
-  }
-  
-  function increaseBalance(uint256 amount) external {
-    // Simulate yield by increasing balance
-  }
-}

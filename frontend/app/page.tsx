@@ -7,15 +7,16 @@ import { APYTable } from './components/APYTable'
 import { VaultStats } from './components/VaultStats'
 import { YieldChart } from './components/YieldChart'
 import { DepositWithdraw } from './components/DepositWithdraw'
-import { AutoYieldToggle } from './components/AutoYieldToggle'
+
 import { ConnectWallet } from './components/ConnectWallet'
+import SafeWalletManager from './components/SafeWalletManager'
 
 import { useVaultData } from './hooks/useVaultData'
 import { useAPYData } from './hooks/useAPYData'
 
-export default function HomePage() {
+function HomePageContent() {
   const { address, isConnected } = useAccount()
-  const [activeTab, setActiveTab] = useState<'overview' | 'manage'>('overview')
+  const [activeTab, setActiveTab] = useState<'overview' | 'manage' | 'safe'>('overview')
   const [mounted, setMounted] = useState(false)
   const [loadingTimeout, setLoadingTimeout] = useState(false)
 
@@ -112,6 +113,16 @@ export default function HomePage() {
           >
             Manage Funds
           </button>
+          <button
+            onClick={() => setActiveTab('safe')}
+            className={`flex-1 py-3 px-6 rounded-md font-medium transition-all ${
+              activeTab === 'safe'
+                ? 'bg-primary-500 text-white shadow-sm'
+                : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+            }`}
+          >
+            🛡️ Smart Wallet
+          </button>
         </div>
 
         {activeTab === 'overview' ? (
@@ -133,11 +144,8 @@ export default function HomePage() {
 
             {/* Yield Chart */}
             <YieldChart userAddress={address} />
-
-            {/* Auto-Yield Toggle */}
-            <AutoYieldToggle />
           </div>
-        ) : (
+        ) : activeTab === 'manage' ? (
           <div className="space-y-8">
             {/* Deposit/Withdraw Interface */}
             <DepositWithdraw
@@ -153,8 +161,46 @@ export default function HomePage() {
               isLoading={vaultLoading}
             />
           </div>
+        ) : (
+          <div className="space-y-8">
+            {/* Safe Wallet Management */}
+            <SafeWalletManager />
+          </div>
         )}
       </main>
     </div>
   )
+}
+
+export default function HomePage() {
+  const [isWagmiReady, setIsWagmiReady] = useState(false)
+
+  useEffect(() => {
+    // Give wagmi a moment to initialize
+    const timer = setTimeout(() => {
+      setIsWagmiReady(true)
+    }, 100)
+
+    return () => clearTimeout(timer)
+  }, [])
+
+  if (!isWagmiReady) {
+    return (
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        minHeight: '100vh',
+        fontSize: '18px',
+        backgroundColor: '#f9fafb'
+      }}>
+        <div style={{ textAlign: 'center' }}>
+          <div style={{ marginBottom: '16px' }}>🔄</div>
+          <div>Initializing Yield Optimizer...</div>
+        </div>
+      </div>
+    )
+  }
+
+  return <HomePageContent />
 }

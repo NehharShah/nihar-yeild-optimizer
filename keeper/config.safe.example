@@ -1,0 +1,43 @@
+# Safe4337 Keeper Configuration for Base Sepolia
+
+# Network Configuration
+NETWORK=baseSepolia
+RPC_URL=https://sepolia.base.org
+CHAIN_ID=84532
+
+# Safe Wallet Configuration
+SAFE_ADDRESS=0x... # Your Safe smart wallet address
+SESSION_KEY_PRIVATE_KEY=0x... # Private key for session key (keeper bot)
+VAULT_ADDRESS=0x61b3B4A39A7607cce75eEda58d6cf01Eddcd344f # Your vault address
+
+# Pimlico Configuration (ERC-4337 Bundler & Paymaster)
+PIMLICO_API_KEY=your-pimlico-api-key
+BUNDLER_URL=https://api.pimlico.io/v1/base-sepolia/rpc
+PAYMASTER_URL=https://api.pimlico.io/v2/base-sepolia/rpc
+
+# Safe4337 Contract Addresses (Base Sepolia)
+ENTRYPOINT_ADDRESS=0x5FF137D4b0FDCD49DcA30c7CF57E578a026d2789
+SAFE_4337_MODULE=0xa581c4A4DB7175302464fF3C06380BC3270b4037
+SAFE_PROXY_FACTORY=0x4e1DCf7AD4e460CfD30791CCC4F9c8a4f820ec67
+SAFE_SINGLETON=0x41675C099F32341bf84BFc5382aF534df5C7461a
+
+# Rebalancing Parameters
+MIN_REBALANCE_THRESHOLD=30 # Minimum APY gain in basis points (0.30%)
+MAX_GAS_COST_THRESHOLD=10  # Maximum gas cost in basis points (0.10%)
+REBALANCE_INTERVAL_MINUTES=30 # Check for rebalancing every 30 minutes
+
+# APY Data Sources
+AAVE_SUBGRAPH_URL=https://api.thegraph.com/subgraphs/name/aave/protocol-v3-base
+MORPHO_API_URL=https://blue-api.morpho.org
+MOONWELL_API_URL=https://moonwell.fi/api
+
+# Analytics
+SEGMENT_WRITE_KEY=your-segment-write-key
+
+# Logging
+LOG_LEVEL=info
+
+# Safety Features
+DAILY_TRANSACTION_LIMIT=100
+SESSION_KEY_VALIDITY_HOURS=24
+ENABLE_GAS_SPONSORSHIP=true

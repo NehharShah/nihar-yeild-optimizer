@@ -1,8 +1,10 @@
 'use client'
 
 import { Wallet, Shield, Zap, TrendingUp } from 'lucide-react'
+import { useAccount, useConnect } from 'wagmi'
 
 export function ConnectWallet() {
+  const { connectors, connect, status, error } = useConnect()
   return (
     <div className="space-y-12">
       <div className="bg-white p-8 rounded-2xl card-shadow-lg">
@@ -37,8 +39,33 @@ export function ConnectWallet() {
           </div>
         </div>
 
-        <div className="flex justify-center">
-          <w3m-button />
+        <div className="space-y-4">
+          {connectors.map((connector) => (
+            <button
+              key={connector.id}
+              disabled={!connector.ready}
+              onClick={() => connect({ connector })}
+              className="w-full bg-blue-500 hover:bg-blue-600 disabled:bg-gray-300 text-white font-medium py-3 px-6 rounded-lg transition-colors flex items-center justify-center space-x-2"
+            >
+              <Wallet className="w-5 h-5" />
+              <span>
+                Connect with {connector.name}
+                {!connector.ready && ' (unsupported)'}
+              </span>
+            </button>
+          ))}
+          
+          {error && (
+            <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+              <p className="text-red-800 text-sm">{error.message}</p>
+            </div>
+          )}
+          
+          {status === 'loading' && (
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+              <p className="text-blue-800 text-sm">Connecting...</p>
+            </div>
+          )}
         </div>
       </div>
 

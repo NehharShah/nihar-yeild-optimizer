@@ -39,6 +39,33 @@ This project implements a **proof-of-concept USDC yield optimizer** with the fol
                     └─────────────────┘
 ```
 
+## 🛡️ Safe4337 Smart Wallet Integration
+
+This project includes a **complete Safe4337 smart wallet integration** fulfilling all assignment requirements:
+
+### ✅ Assignment Requirements Met
+
+- **✅ ERC-4337 Vault**: Safe smart accounts with Safe4337Module  
+- **✅ Session Keys**: Restricted permissions for keeper bot (rebalance-only)
+- **✅ Account Abstraction**: UserOperations instead of EOA transactions
+- **✅ Auto-Yield Toggle**: Grant/revoke session keys via UI
+- **✅ Safety Features**: Daily limits, key expiration, instant revocation
+- **✅ Meta-transactions**: Bundler integration via Pimlico
+- **✅ Gas Sponsorship**: Optional paymaster for seamless UX
+
+### 🎯 Key Features
+
+- **Smart Accounts**: Deploy Safe wallets with ERC-4337 support
+- **Rebalance-Only Access**: Session keys cannot withdraw or transfer funds  
+- **24/7 Automation**: Keeper bot operates without compromising security
+- **Time-Limited Keys**: Session keys expire after 24 hours automatically
+- **Transaction Limits**: Maximum 1000 rebalances per session key
+- **Instant Revocation**: Users can revoke automation anytime
+
+### 📖 Documentation
+
+For complete implementation details, see **[SAFE4337_README.md](./SAFE4337_README.md)**
+
 ## 🚀 Quick Start
 
 ### Prerequisites

@@ -1,11 +1,12 @@
 'use client'
 
-import { useAccount, useDisconnect } from 'wagmi'
+import { useAccount, useConnect, useDisconnect } from 'wagmi'
 import { Wallet, LogOut, TrendingUp } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
 export function Header() {
   const { address, isConnected } = useAccount()
+  const { connectors, connect } = useConnect()
   const { disconnect } = useDisconnect()
   const [mounted, setMounted] = useState(false)
 
@@ -59,7 +60,16 @@ export function Header() {
                 </div>
               </div>
             ) : (
-              <w3m-button />
+              <button
+                onClick={() => {
+                  const connector = connectors.find(c => c.ready) || connectors[0]
+                  if (connector) connect({ connector })
+                }}
+                className="flex items-center space-x-2 bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg transition-colors"
+              >
+                <Wallet className="w-4 h-4" />
+                <span>Connect Wallet</span>
+              </button>
             )
           ) : (
             // Loading placeholder to prevent layout shift

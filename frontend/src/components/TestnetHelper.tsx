@@ -16,7 +16,7 @@ export default function TestnetHelper() {
   const [txHash, setTxHash] = useState<`0x${string}` | undefined>();
   
   const { write: _writeContract, isLoading: _isPending } = useContractWrite({
-    onSuccess(data) {
+    onSuccess(data: any) {
       setTxHash(data.hash);
     },
   });

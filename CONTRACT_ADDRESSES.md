@@ -227,3 +227,17 @@ NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID=your_project_id
 ```
 
 ---
+## Safe4337 Infrastructure - Base Sepolia Testnet
+
+### Pre-deployed Safe Contracts
+- **EntryPoint**: `0x5FF137D4b0FDCD49DcA30c7CF57E578a026d2789`
+- **Safe4337Module**: `0xa581c4A4DB7175302464fF3C06380BC3270b4037`
+- **SafeProxyFactory**: `0x4e1DCf7AD4e460CfD30791CCC4F9c8a4f820ec67`
+- **SafeSingleton**: `0x41675C099F32341bf84BFc5382aF534df5C7461a`
+- **AddModuleLib**: `0x8EcD4ec46D4D2a6B64fE960B3D64e8B94B2234eb`
+- **MultiSend**: `0x38869bf66a61cF6bDB996A6aE40D5853Fd43B526`
+
+### Custom Deployed Contracts
+- **SessionKeyManager**: `0xbB0b6DB7dF23488Ad16115507e2516e24b2Ab81C`
+- **SafeWalletFactory**: `0xAF7E4Ee5dEB0Aab72d46a7F94F273Cc9cb0BAB02`
+

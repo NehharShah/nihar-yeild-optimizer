@@ -1,5 +1,7 @@
 'use client'
 
+import { getContractAddresses } from '../config/contracts'
+
 // Segment Analytics Integration
 interface SegmentEvent {
   userId?: string
@@ -30,6 +32,17 @@ class AnalyticsService {
     document.head.appendChild(script)
   }
 
+  private getNetworkInfo(chainId?: number) {
+    const contracts = getContractAddresses(chainId)
+    const isTestnet = chainId === 84532 // Base Sepolia
+    return {
+      network: isTestnet ? 'base-sepolia' : 'base',
+      chainId: chainId || 8453,
+      isTestnet,
+      vaultAddress: contracts.vaultAddress
+    }
+  }
+
   private track(event: SegmentEvent) {
     if (typeof window === 'undefined' || !this.isInitialized) {
       console.log('Analytics event (not initialized):', event)
@@ -47,7 +60,8 @@ class AnalyticsService {
   }
 
   // Vault Events
-  vaultDeposit(userId: string, amount: number, protocol: string) {
+  vaultDeposit(userId: string, amount: number, protocol: string, chainId?: number) {
+    const networkInfo = this.getNetworkInfo(chainId)
     this.track({
       userId,
       event: 'vault_deposit',
@@ -55,12 +69,16 @@ class AnalyticsService {
         amount,
         protocol,
         timestamp: new Date().toISOString(),
-        network: 'base'
+        network: networkInfo.network,
+        chainId: networkInfo.chainId,
+        isTestnet: networkInfo.isTestnet,
+        vaultAddress: networkInfo.vaultAddress
       }
     })
   }
 
-  vaultWithdraw(userId: string, amount: number, yieldEarned: number) {
+  vaultWithdraw(userId: string, amount: number, yieldEarned: number, chainId?: number) {
+    const networkInfo = this.getNetworkInfo(chainId)
     this.track({
       userId,
       event: 'vault_withdraw',
@@ -68,7 +86,10 @@ class AnalyticsService {
         amount,
         yieldEarned,
         timestamp: new Date().toISOString(),
-        network: 'base'
+        network: networkInfo.network,
+        chainId: networkInfo.chainId,
+        isTestnet: networkInfo.isTestnet,
+        vaultAddress: networkInfo.vaultAddress
       }
     })
   }
@@ -79,8 +100,10 @@ class AnalyticsService {
     toProtocol: string,
     amount: number,
     apyGain: number,
-    gasCost: number
+    gasCost: number,
+    chainId?: number
   ) {
+    const networkInfo = this.getNetworkInfo(chainId)
     this.track({
       event: 'rebalance_executed',
       properties: {
@@ -90,7 +113,10 @@ class AnalyticsService {
         apyGain,
         gasCost,
         timestamp: new Date().toISOString(),
-        network: 'base',
+        network: networkInfo.network,
+        chainId: networkInfo.chainId,
+        isTestnet: networkInfo.isTestnet,
+        vaultAddress: networkInfo.vaultAddress,
         automated: true
       }
     })
@@ -185,7 +211,8 @@ class AnalyticsService {
   }
 
   // Error Events
-  errorOccurred(userId: string, errorType: string, errorMessage: string, context?: any) {
+  errorOccurred(userId: string, errorType: string, errorMessage: string, context?: any, chainId?: number) {
+    const networkInfo = this.getNetworkInfo(chainId)
     this.track({
       userId,
       event: 'error_occurred',
@@ -194,7 +221,10 @@ class AnalyticsService {
         errorMessage,
         context,
         timestamp: new Date().toISOString(),
-        network: 'base'
+        network: networkInfo.network,
+        chainId: networkInfo.chainId,
+        isTestnet: networkInfo.isTestnet,
+        vaultAddress: networkInfo.vaultAddress
       }
     })
   }
@@ -209,12 +239,12 @@ export function useAnalytics() {
 }
 
 // Utility functions
-export const trackVaultDeposit = (userId: string, amount: number, protocol: string) => {
-  analytics.vaultDeposit(userId, amount, protocol)
+export const trackVaultDeposit = (userId: string, amount: number, protocol: string, chainId?: number) => {
+  analytics.vaultDeposit(userId, amount, protocol, chainId)
 }
 
-export const trackVaultWithdraw = (userId: string, amount: number, yieldEarned: number) => {
-  analytics.vaultWithdraw(userId, amount, yieldEarned)
+export const trackVaultWithdraw = (userId: string, amount: number, yieldEarned: number, chainId?: number) => {
+  analytics.vaultWithdraw(userId, amount, yieldEarned, chainId)
 }
 
 export const trackRebalanceExecuted = (
@@ -222,9 +252,10 @@ export const trackRebalanceExecuted = (
   toProtocol: string,
   amount: number,
   apyGain: number,
-  gasCost: number
+  gasCost: number,
+  chainId?: number
 ) => {
-  analytics.rebalanceExecuted(fromProtocol, toProtocol, amount, apyGain, gasCost)
+  analytics.rebalanceExecuted(fromProtocol, toProtocol, amount, apyGain, gasCost, chainId)
 }
 
 export const trackYieldEarned = (userId: string, amount: number, period: string, protocol: string) => {
@@ -235,6 +266,6 @@ export const trackAutoYieldToggled = (userId: string, enabled: boolean) => {
   analytics.autoYieldToggled(userId, enabled)
 }
 
-export const trackError = (userId: string, errorType: string, errorMessage: string, context?: any) => {
-  analytics.errorOccurred(userId, errorType, errorMessage, context)
+export const trackError = (userId: string, errorType: string, errorMessage: string, context?: any, chainId?: number) => {
+  analytics.errorOccurred(userId, errorType, errorMessage, context, chainId)
 }

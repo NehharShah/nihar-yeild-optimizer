@@ -8,11 +8,11 @@
 WITH daily_deposits AS (
     SELECT 
         DATE_TRUNC('day', block_time) as date,
-        SUM(CASE WHEN topics[0] = 0xdcbc1c05240f31ff3ad067ef1ee35ce4997762752e3a095284754544f4c709d7 THEN -- Deposit event
-            CAST(data as UINT256) / 1e6 -- Convert from USDC decimals
+        SUM(CASE WHEN topic0 = 0xdcbc1c05240f31ff3ad067ef1ee35ce4997762752e3a095284754544f4c709d7 THEN -- Deposit event
+            bytearray_to_uint256(data) / 1e6 -- Convert from USDC decimals
         ELSE 0 END) as daily_deposits,
-        SUM(CASE WHEN topics[0] = 0xfbde797d201c681b91056529119e0b02407c7bb96a4a2c75c01fc9667232c8db THEN -- Withdraw event  
-            CAST(data as UINT256) / 1e6
+        SUM(CASE WHEN topic0 = 0xfbde797d201c681b91056529119e0b02407c7bb96a4a2c75c01fc9667232c8db THEN -- Withdraw event
+            bytearray_to_uint256(data) / 1e6
         ELSE 0 END) as daily_withdrawals
     FROM base.logs
     WHERE contract_address = 0x{{VAULT_ADDRESS}} -- Replace with actual vault address
@@ -44,20 +44,20 @@ WITH rebalance_events AS (
     SELECT 
         block_time,
         CASE 
-            WHEN CAST(SUBSTRING(data, 1, 32) as UINT256) = 0 THEN 'Aave'
-            WHEN CAST(SUBSTRING(data, 1, 32) as UINT256) = 1 THEN 'Morpho'
-            WHEN CAST(SUBSTRING(data, 1, 32) as UINT256) = 2 THEN 'Moonwell'
+            WHEN bytearray_to_uint256(SUBSTRING(data, 1, 32)) = 0 THEN 'Aave'
+            WHEN bytearray_to_uint256(SUBSTRING(data, 1, 32)) = 1 THEN 'Morpho'
+            WHEN bytearray_to_uint256(SUBSTRING(data, 1, 32)) = 2 THEN 'Moonwell'
         END as from_protocol,
         CASE 
-            WHEN CAST(SUBSTRING(data, 33, 32) as UINT256) = 0 THEN 'Aave'
-            WHEN CAST(SUBSTRING(data, 33, 32) as UINT256) = 1 THEN 'Morpho'
-            WHEN CAST(SUBSTRING(data, 33, 32) as UINT256) = 2 THEN 'Moonwell'
+            WHEN bytearray_to_uint256(SUBSTRING(data, 33, 32)) = 0 THEN 'Aave'
+            WHEN bytearray_to_uint256(SUBSTRING(data, 33, 32)) = 1 THEN 'Morpho'
+            WHEN bytearray_to_uint256(SUBSTRING(data, 33, 32)) = 2 THEN 'Moonwell'
         END as to_protocol,
-        CAST(SUBSTRING(data, 65, 32) as UINT256) as apy_gain_bps,
-        CAST(SUBSTRING(data, 97, 32) as UINT256) / 1e6 as amount
+        bytearray_to_uint256(SUBSTRING(data, 65, 32)) as apy_gain_bps,
+        bytearray_to_uint256(SUBSTRING(data, 97, 32)) / 1e6 as amount
     FROM base.logs
     WHERE contract_address = 0x{{VAULT_ADDRESS}}
-      AND topics[0] = 0x{{REBALANCE_EVENT_HASH}} -- Rebalance event signature
+      AND topic0 = 0x{{REBALANCE_EVENT_HASH}} -- Rebalance event signature
       AND block_time >= NOW() - INTERVAL '30' DAY
 )
 SELECT 
@@ -76,12 +76,12 @@ ORDER BY rebalance_count DESC;
 -- Query ID: YIELD_PERFORMANCE
 WITH yield_events AS (
     SELECT 
-        CAST(topics[1] as VARCHAR) as user_address,
-        CAST(SUBSTRING(data, 1, 32) as UINT256) / 1e6 as yield_amount,
+        CAST(topic1 as VARCHAR) as user_address,
+        bytearray_to_uint256(SUBSTRING(data, 1, 32)) / 1e6 as yield_amount,
         block_time
     FROM base.logs
     WHERE contract_address = 0x{{VAULT_ADDRESS}}
-      AND topics[0] = 0x{{YIELD_EARNED_EVENT_HASH}} -- YieldEarned event
+      AND topic0 = 0x{{YIELD_EARNED_EVENT_HASH}} -- YieldEarned event
       AND block_time >= NOW() - INTERVAL '90' DAY
 )
 SELECT 
@@ -100,13 +100,13 @@ ORDER BY date DESC;
 -- Query ID: USER_METRICS
 WITH first_deposits AS (
     SELECT 
-        CAST(topics[2] as VARCHAR) as user_address,
+        CAST(topic2 as VARCHAR) as user_address,
         MIN(block_time) as first_deposit_time,
         COUNT(*) as total_deposits,
-        SUM(CAST(SUBSTRING(data, 1, 32) as UINT256) / 1e6) as total_deposited
+        SUM(bytearray_to_uint256(SUBSTRING(data, 1, 32)) / 1e6) as total_deposited
     FROM base.logs
     WHERE contract_address = 0x{{VAULT_ADDRESS}}
-      AND topics[0] = 0xdcbc1c05240f31ff3ad067ef1ee35ce4997762752e3a095284754544f4c709d7 -- Deposit event
+      AND topic0 = 0xdcbc1c05240f31ff3ad067ef1ee35ce4997762752e3a095284754544f4c709d7 -- Deposit event
     GROUP BY 1
 ),
 user_cohorts AS (
@@ -135,16 +135,16 @@ WITH rebalance_details AS (
     SELECT 
         block_time,
         CASE 
-            WHEN CAST(SUBSTRING(data, 33, 32) as UINT256) = 0 THEN 'Aave'
-            WHEN CAST(SUBSTRING(data, 33, 32) as UINT256) = 1 THEN 'Morpho'
-            WHEN CAST(SUBSTRING(data, 33, 32) as UINT256) = 2 THEN 'Moonwell'
+            WHEN bytearray_to_uint256(SUBSTRING(data, 33, 32)) = 0 THEN 'Aave'
+            WHEN bytearray_to_uint256(SUBSTRING(data, 33, 32)) = 1 THEN 'Morpho'
+            WHEN bytearray_to_uint256(SUBSTRING(data, 33, 32)) = 2 THEN 'Moonwell'
         END as to_protocol,
-        CAST(SUBSTRING(data, 65, 32) as UINT256) as apy_gain_bps,
-        CAST(SUBSTRING(data, 97, 32) as UINT256) / 1e6 as amount,
+        bytearray_to_uint256(SUBSTRING(data, 65, 32)) as apy_gain_bps,
+        bytearray_to_uint256(SUBSTRING(data, 97, 32)) / 1e6 as amount,
         hash as tx_hash
     FROM base.logs
     WHERE contract_address = 0x{{VAULT_ADDRESS}}
-      AND topics[0] = 0x{{REBALANCE_EVENT_HASH}}
+      AND topic0 = 0x{{REBALANCE_EVENT_HASH}}
       AND block_time >= NOW() - INTERVAL '30' DAY
 ),
 tx_costs AS (
@@ -177,15 +177,15 @@ WITH protocol_preferences AS (
     SELECT 
         DATE_TRUNC('day', block_time) as date,
         CASE 
-            WHEN CAST(SUBSTRING(data, 33, 32) as UINT256) = 0 THEN 'Aave'
-            WHEN CAST(SUBSTRING(data, 33, 32) as UINT256) = 1 THEN 'Morpho'
-            WHEN CAST(SUBSTRING(data, 33, 32) as UINT256) = 2 THEN 'Moonwell'
+            WHEN bytearray_to_uint256(SUBSTRING(data, 33, 32)) = 0 THEN 'Aave'
+            WHEN bytearray_to_uint256(SUBSTRING(data, 33, 32)) = 1 THEN 'Morpho'
+            WHEN bytearray_to_uint256(SUBSTRING(data, 33, 32)) = 2 THEN 'Moonwell'
         END as preferred_protocol,
         COUNT(*) as rebalances_to_protocol,
-        AVG(CAST(SUBSTRING(data, 65, 32) as UINT256)) as avg_apy_advantage
+        AVG(bytearray_to_uint256(SUBSTRING(data, 65, 32))) as avg_apy_advantage
     FROM base.logs
     WHERE contract_address = 0x{{VAULT_ADDRESS}}
-      AND topics[0] = 0x{{REBALANCE_EVENT_HASH}}
+      AND topic0 = 0x{{REBALANCE_EVENT_HASH}}
       AND block_time >= NOW() - INTERVAL '30' DAY
     GROUP BY 1, 2
 )
@@ -210,7 +210,7 @@ WITH gas_analysis AS (
         AVG(CASE WHEN l.contract_address = 0x{{VAULT_ADDRESS}} THEN t.gas_used * t.gas_price / 1e18 END) as avg_gas_cost_eth
     FROM base.transactions t
     LEFT JOIN base.logs l ON t.hash = l.transaction_hash 
-        AND l.topics[0] = 0x{{REBALANCE_EVENT_HASH}}
+        AND l.topic0 = 0x{{REBALANCE_EVENT_HASH}}
     WHERE t.block_time >= NOW() - INTERVAL '7' DAY
     GROUP BY 1
 )
@@ -235,29 +235,29 @@ ORDER BY hour DESC;
 -- Query ID: SUMMARY_STATS
 SELECT 
     -- TVL Stats
-    (SELECT SUM(CAST(data as UINT256)) / 1e6 
+    (SELECT SUM(bytearray_to_uint256(data)) / 1e6 
      FROM base.logs 
      WHERE contract_address = 0x{{VAULT_ADDRESS}} 
-       AND topics[0] = 0xdcbc1c05240f31ff3ad067ef1ee35ce4997762752e3a095284754544f4c709d7
+       AND topic0 = 0xdcbc1c05240f31ff3ad067ef1ee35ce4997762752e3a095284754544f4c709d7
      ORDER BY block_time DESC 
      LIMIT 1) as current_tvl,
      
     -- User Stats
-    (SELECT COUNT(DISTINCT CAST(topics[2] as VARCHAR))
+    (SELECT COUNT(DISTINCT CAST(topic2 as VARCHAR))
      FROM base.logs 
      WHERE contract_address = 0x{{VAULT_ADDRESS}} 
-       AND topics[0] = 0xdcbc1c05240f31ff3ad067ef1ee35ce4997762752e3a095284754544f4c709d7) as total_users,
+       AND topic0 = 0xdcbc1c05240f31ff3ad067ef1ee35ce4997762752e3a095284754544f4c709d7) as total_users,
        
     -- Rebalancing Stats  
     (SELECT COUNT(*) 
      FROM base.logs 
      WHERE contract_address = 0x{{VAULT_ADDRESS}} 
-       AND topics[0] = 0x{{REBALANCE_EVENT_HASH}}
+       AND topic0 = 0x{{REBALANCE_EVENT_HASH}}
        AND block_time >= NOW() - INTERVAL '30' DAY) as rebalances_30d,
        
     -- Yield Stats
-    (SELECT SUM(CAST(SUBSTRING(data, 1, 32) as UINT256)) / 1e6
+    (SELECT SUM(bytearray_to_uint256(SUBSTRING(data, 1, 32))) / 1e6
      FROM base.logs 
      WHERE contract_address = 0x{{VAULT_ADDRESS}} 
-       AND topics[0] = 0x{{YIELD_EARNED_EVENT_HASH}}
+       AND topic0 = 0x{{YIELD_EARNED_EVENT_HASH}}
        AND block_time >= NOW() - INTERVAL '30' DAY) as total_yield_30d;

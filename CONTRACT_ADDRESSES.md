@@ -34,14 +34,16 @@
 | **Moonwell** | mUSDC | `0xEdc817A28E8B93B03976FBd4a3dDBc9f7D176c22` | Moonwell USDC market |
 | **Moonwell** | Comptroller | `0xfBb21d0380beE3312B33c4353c8936a0F13EF26C` | Moonwell controller |
 
-### Our Deployed Contracts (To be updated after deployment)
+### Our Deployed Contracts - Base Sepolia Testnet
 
 | Contract | Address | Verification |
 |----------|---------|--------------|
-| **USDCYieldVault** | `0xAD2eE75074b0e68B7D658de907C1BdbD72fE56BE` | [BaseScan ↗](https://sepolia.basescan.org/address/0xAD2eE75074b0e68B7D658de907C1BdbD72fE56BE) |
-| **AaveAdapter** | `0x...` | [BaseScan ↗]() |
-| **MorphoAdapter** | `0x...` | [BaseScan ↗]() |
-| **MoonwellAdapter** | `0x...` | [BaseScan ↗]() |
+| **USDCYieldVault** | `0x61b3B4A39A7607cce75eEda58d6cf01Eddcd344f` | [BaseScan ↗](https://sepolia.basescan.org/address/0x61b3B4A39A7607cce75eEda58d6cf01Eddcd344f) |
+| **TestnetAaveAdapter** | `0x25e390f75320c7E88337e3945dcD68E6F0ca02ed` | [BaseScan ↗](https://sepolia.basescan.org/address/0x25e390f75320c7E88337e3945dcD68E6F0ca02ed) |
+| **TestnetMorphoAdapter** | `0xB438f6DA411D17472AF1735511f9296E5C9341AF` | [BaseScan ↗](https://sepolia.basescan.org/address/0xB438f6DA411D17472AF1735511f9296E5C9341AF) |
+| **TestnetMoonwellAdapter** | `0x9258CB7AC8DcC2456C340837EEbA0926A06DE2D7` | [BaseScan ↗](https://sepolia.basescan.org/address/0x9258CB7AC8DcC2456C340837EEbA0926A06DE2D7) |
+| **USDC (Sepolia)** | `0x036CbD53842c5426634e7929541eC2318f3dCF7e` | [BaseScan ↗](https://sepolia.basescan.org/address/0x036CbD53842c5426634e7929541eC2318f3dCF7e) |
+
 
 ---
 
@@ -95,6 +97,20 @@ const sessionKeyConfig = {
 - **RPC URL**: `https://sepolia.base.org`
 - **Explorer**: https://sepolia.basescan.org
 - **Faucet**: https://portal.cdp.coinbase.com/products/faucet
+
+#### Testnet Contract Configuration
+```typescript
+// Base Sepolia testnet addresses
+export const TESTNET_ADDRESSES = {
+  VAULT_ADDRESS: "0x61b3B4A39A7607cce75eEda58d6cf01Eddcd344f",
+  USDC_ADDRESS: "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+  ADAPTERS: {
+    AAVE: "0x25e390f75320c7E88337e3945dcD68E6F0ca02ed",
+    MOONWELL: "0x9258CB7AC8DcC2456C340837EEbA0926A06DE2D7", 
+    MORPHO: "0xB438f6DA411D17472AF1735511f9296E5C9341AF"
+  }
+};
+```
 
 ---
 

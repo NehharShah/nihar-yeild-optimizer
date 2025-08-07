@@ -1,6 +1,7 @@
 import * as dotenv from 'dotenv';
 import cron from 'node-cron';
 import { YieldKeeperService } from './services/YieldKeeperService';
+import { getNetworkConfig } from './config/networks';
 import { logger } from './utils/logger';
 
 dotenv.config();
@@ -9,13 +10,19 @@ async function main() {
   try {
     logger.info('Starting USDC Yield Optimizer Keeper...');
 
+    const network = process.env.NETWORK || 'baseSepolia';
+    const networkConfig = getNetworkConfig(network);
+    
+    logger.info(`Using network: ${networkConfig.name} (Chain ID: ${networkConfig.chainId})`);
+    logger.info(`Vault address: ${networkConfig.vaultAddress}`);
+
     const keeper = new YieldKeeperService({
-      rpcUrl: process.env.RPC_URL || 'https://mainnet.base.org',
+      rpcUrl: process.env.RPC_URL || networkConfig.rpcUrl,
       privateKey: process.env.KEEPER_PRIVATE_KEY || '',
-      vaultAddress: process.env.VAULT_ADDRESS || '',
+      vaultAddress: process.env.VAULT_ADDRESS || networkConfig.vaultAddress,
       safeAddress: process.env.SAFE_ADDRESS || '',
-      minRebalanceThreshold: 30, // 30 basis points
-      maxGasCostThreshold: 10,   // 10 basis points
+      minRebalanceThreshold: parseInt(process.env.MIN_REBALANCE_THRESHOLD || '30'), // basis points
+      maxGasCostThreshold: parseInt(process.env.MAX_GAS_COST_THRESHOLD || '10'),   // basis points
     });
 
     // Initialize the keeper

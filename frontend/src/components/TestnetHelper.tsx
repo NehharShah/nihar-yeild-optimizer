@@ -3,9 +3,9 @@
 import { useState } from 'react';
 import { useAccount, useBalance, useContractWrite, useWaitForTransaction, useNetwork } from 'wagmi';
 import { parseUnits, formatUnits } from 'viem';
-// Contract addresses
+// Contract addresses - Base Sepolia
 const CONTRACTS = {
-  VAULT_ADDRESS: '0x9094E827F56c1a19666B9D33790bFf0678868685',
+  VAULT_ADDRESS: '0x61b3B4A39A7607cce75eEda58d6cf01Eddcd344f',
   USDC_ADDRESS: '0x036CbD53842c5426634e7929541eC2318f3dCF7e'
 };
 

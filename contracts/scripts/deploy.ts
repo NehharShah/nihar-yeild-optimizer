@@ -30,8 +30,58 @@ async function main() {
 
   if (isTestnet) {
     console.log("\n=== TESTNET DEPLOYMENT ===");
-    console.log("Note: Protocol adapters skipped on testnet as protocols are not deployed");
-    console.log("This is sufficient for testing the vault functionality");
+    console.log("Deploying adapters on testnet for testing purposes");
+    
+    // For testnet, we'll try to deploy adapters with mock addresses or skip if protocols don't exist
+    let adapters: any = {};
+    
+    try {
+      console.log("Deploying TestnetAaveAdapter...");
+      const TestnetAaveAdapter = await ethers.getContractFactory("TestnetAaveAdapter");
+      const aaveAdapter = await TestnetAaveAdapter.deploy(USDC_ADDRESS, vaultAddress);
+      await aaveAdapter.waitForDeployment();
+      const aaveAdapterAddress = await aaveAdapter.getAddress();
+      console.log("TestnetAaveAdapter deployed to:", aaveAdapterAddress);
+      adapters.TestnetAaveAdapter = aaveAdapterAddress;
+      
+      // Set adapter in vault
+      await vault.setAdapter(0, aaveAdapterAddress);
+    } catch (error) {
+      console.log("TestnetAaveAdapter deployment failed:", (error as Error).message);
+      adapters.TestnetAaveAdapter = "Deployment failed";
+    }
+    
+    try {
+      console.log("Deploying TestnetMoonwellAdapter...");
+      const TestnetMoonwellAdapter = await ethers.getContractFactory("TestnetMoonwellAdapter");
+      const moonwellAdapter = await TestnetMoonwellAdapter.deploy(USDC_ADDRESS, vaultAddress);
+      await moonwellAdapter.waitForDeployment();
+      const moonwellAdapterAddress = await moonwellAdapter.getAddress();
+      console.log("TestnetMoonwellAdapter deployed to:", moonwellAdapterAddress);
+      adapters.TestnetMoonwellAdapter = moonwellAdapterAddress;
+      
+      // Set adapter in vault
+      await vault.setAdapter(1, moonwellAdapterAddress);
+    } catch (error) {
+      console.log("TestnetMoonwellAdapter deployment failed:", (error as Error).message);
+      adapters.TestnetMoonwellAdapter = "Deployment failed";
+    }
+    
+    try {
+      console.log("Deploying TestnetMorphoAdapter...");
+      const TestnetMorphoAdapter = await ethers.getContractFactory("TestnetMorphoAdapter");
+      const morphoAdapter = await TestnetMorphoAdapter.deploy(USDC_ADDRESS, vaultAddress);
+      await morphoAdapter.waitForDeployment();
+      const morphoAdapterAddress = await morphoAdapter.getAddress();
+      console.log("TestnetMorphoAdapter deployed to:", morphoAdapterAddress);
+      adapters.TestnetMorphoAdapter = morphoAdapterAddress;
+      
+      // Set adapter in vault
+      await vault.setAdapter(2, morphoAdapterAddress);
+    } catch (error) {
+      console.log("TestnetMorphoAdapter deployment failed:", (error as Error).message);
+      adapters.TestnetMorphoAdapter = "Deployment failed";
+    }
     
     deploymentInfo = {
       network: {
@@ -41,10 +91,11 @@ async function main() {
       deployer: deployer.address,
       contracts: {
         USDCYieldVault: vaultAddress,
-        USDC: USDC_ADDRESS
+        USDC: USDC_ADDRESS,
+        ...adapters
       },
       timestamp: new Date().toISOString(),
-      note: "Testnet deployment - adapters not deployed"
+      note: "Testnet deployment - adapters deployed where possible"
     };
   } else {
     // Full mainnet deployment with adapters

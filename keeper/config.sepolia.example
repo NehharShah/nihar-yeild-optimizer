@@ -1,0 +1,35 @@
+# Base Sepolia Testnet Configuration
+NODE_ENV=development
+
+# Network Configuration
+RPC_URL=https://sepolia.base.org
+CHAIN_ID=84532
+
+# Contract Addresses (Base Sepolia Deployment)
+VAULT_ADDRESS=0x61b3B4A39A7607cce75eEda58d6cf01Eddcd344f
+USDC_ADDRESS=0x036CbD53842c5426634e7929541eC2318f3dCF7e
+
+# Adapter Addresses
+AAVE_ADAPTER_ADDRESS=0x25e390f75320c7E88337e3945dcD68E6F0ca02ed
+MOONWELL_ADAPTER_ADDRESS=0x9258CB7AC8DcC2456C340837EEbA0926A06DE2D7
+MORPHO_ADAPTER_ADDRESS=0xB438f6DA411D17472AF1735511f9296E5C9341AF
+
+# Keeper Configuration
+KEEPER_PRIVATE_KEY=your_testnet_private_key_here
+SAFE_ADDRESS=your_safe_address_here
+
+# Thresholds (in basis points)
+MIN_REBALANCE_THRESHOLD=30
+MAX_GAS_COST_THRESHOLD=10
+
+# API Configuration
+PORT=3001
+API_KEY=your_api_key_here
+
+# Monitoring
+LOG_LEVEL=debug
+ENABLE_METRICS=true
+
+# Testnet specific settings
+ENABLE_TESTNET_MODE=true
+DRY_RUN=false

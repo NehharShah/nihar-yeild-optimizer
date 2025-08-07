@@ -2,9 +2,9 @@
 
 import { useContractRead, useContractReads } from 'wagmi'
 import { useQuery } from '@tanstack/react-query'
+import { useNetwork } from 'wagmi'
 import { ethers } from 'ethers'
-
-const VAULT_ADDRESS = '0x9094E827F56c1a19666B9D33790bFf0678868685' as `0x${string}` // New fixed vault
+import { getContractAddresses } from '../config/contracts'
 
 // Helper function to safely format units
 const safeFormatUnits = (value: any, decimals: number): number => {
@@ -69,6 +69,10 @@ const vaultABI = [
 ] as const
 
 export function useVaultData(userAddress?: `0x${string}`) {
+  const { chain } = useNetwork()
+  const contracts = getContractAddresses(chain?.id)
+  const VAULT_ADDRESS = contracts.vaultAddress
+
   const { data: contractData, isLoading: contractLoading } = useContractReads({
     contracts: [
       {

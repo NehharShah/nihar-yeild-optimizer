@@ -1,10 +1,9 @@
 'use client'
 
-import { useContractReads } from 'wagmi'
+import { useContractReads, useNetwork } from 'wagmi'
 import { useQuery } from '@tanstack/react-query'
 import { APYData } from '../components/APYTable'
-
-const VAULT_ADDRESS = process.env.NEXT_PUBLIC_VAULT_ADDRESS as `0x${string}`
+import { getContractAddresses } from '../config/contracts'
 
 const vaultABI = [
   {
@@ -24,6 +23,10 @@ const vaultABI = [
 ] as const
 
 export function useAPYData() {
+  const { chain } = useNetwork()
+  const contracts = getContractAddresses(chain?.id)
+  const VAULT_ADDRESS = contracts.vaultAddress
+
   // Get on-chain APY data
   const { data: contractData, isLoading: contractLoading } = useContractReads({
     contracts: [

@@ -1,12 +1,10 @@
 'use client'
 
 import { useState } from 'react'
-import { useAccount, useContractWrite, useContractRead } from 'wagmi'
+import { useAccount, useContractWrite, useContractRead, useNetwork } from 'wagmi'
 import { parseUnits, formatUnits } from 'ethers'
 import { ArrowDownCircle, ArrowUpCircle, Loader2, AlertCircle } from 'lucide-react'
-
-const VAULT_ADDRESS = '0x9094E827F56c1a19666B9D33790bFf0678868685' as `0x${string}` // New fixed vault
-const USDC_ADDRESS = '0x036CbD53842c5426634e7929541eC2318f3dCF7e' as `0x${string}` // USDC on Base Sepolia
+import { getContractAddresses } from '../config/contracts'
 
 const vaultABI = [
   {
@@ -83,6 +81,11 @@ interface DepositWithdrawProps {
 
 export function DepositWithdraw({ userBalance, vaultTotalAssets }: DepositWithdrawProps) {
   const { address } = useAccount()
+  const { chain } = useNetwork()
+  const contracts = getContractAddresses(chain?.id)
+  const VAULT_ADDRESS = contracts.vaultAddress
+  const USDC_ADDRESS = contracts.usdcAddress
+  
   const [mode, setMode] = useState<'deposit' | 'withdraw'>('deposit')
   const [amount, setAmount] = useState('')
   const [isProcessing, setIsProcessing] = useState(false)
@@ -163,12 +166,24 @@ export function DepositWithdraw({ userBalance, vaultTotalAssets }: DepositWithdr
       const amountWei = parseUnits(amount, 6) // USDC has 6 decimals
 
       if (mode === 'deposit') {
-        // Check if approval is needed
-        if (!allowance || allowance < amountWei) {
-          console.log('Approving USDC...')
-          await approveUSDC({
-            args: [VAULT_ADDRESS, amountWei],
+        // Check if approval is needed - use a larger amount to avoid this issue
+        const requiredAllowance = amountWei
+        
+        if (!allowance || allowance < requiredAllowance) {
+          console.log('Approving USDC...', 'Required:', requiredAllowance.toString(), 'Current:', allowance?.toString())
+          
+          // Approve a larger amount to avoid frequent approvals
+          const approveAmount = requiredAllowance * BigInt(10) // Approve 10x the amount
+          
+          const approveTx = await approveUSDC({
+            args: [VAULT_ADDRESS, approveAmount],
           })
+          
+          console.log('Approval transaction sent:', approveTx)
+          console.log('Waiting for approval to be processed...')
+          
+          // Wait a bit for the transaction to be processed
+          await new Promise(resolve => setTimeout(resolve, 3000))
         }
 
         console.log('Depositing...')

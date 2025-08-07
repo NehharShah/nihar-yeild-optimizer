@@ -342,7 +342,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - **Base** for L2 infrastructure
 
 
-### Base Sepolia Contract Link: https://sepolia.basescan.org/token/0x9094E827F56c1a19666B9D33790bFf0678868685
+### Base Sepolia Contract Link: https://sepolia.basescan.org/token/0x61b3B4A39A7607cce75eEda58d6cf01Eddcd344f
 ---
 
 **⚠️ Disclaimer**: This is a proof-of-concept for educational purposes. Use at your own risk. Always audit smart contracts before mainnet deployment.

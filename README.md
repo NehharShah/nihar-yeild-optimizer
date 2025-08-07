@@ -62,10 +62,6 @@ This project includes a **complete Safe4337 smart wallet integration** fulfillin
 - **Transaction Limits**: Maximum 1000 rebalances per session key
 - **Instant Revocation**: Users can revoke automation anytime
 
-### 📖 Documentation
-
-For complete implementation details, see **[SAFE4337_README.md](./SAFE4337_README.md)**
-
 ## 🚀 Quick Start
 
 ### Prerequisites

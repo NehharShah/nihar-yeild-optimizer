@@ -92,37 +92,6 @@ This project implements a **proof-of-concept USDC yield optimizer** with the fol
    npm run dev
    ```
 
-## 📁 Project Structure
-
-```
-assign-elsa/
-├── contracts/                 # Smart contracts (Hardhat)
-│   ├── contracts/
-│   │   ├── USDCYieldVault.sol # Main ERC-4626 vault
-│   │   ├── adapters/          # Protocol adapters
-│   │   │   ├── AaveAdapter.sol
-│   │   │   ├── MorphoAdapter.sol
-│   │   │   └── MoonwellAdapter.sol
-│   │   └── interfaces/
-│   ├── scripts/deploy.ts      # Deployment scripts
-│   └── test/                  # Contract tests
-├── keeper/                    # Off-chain automation
-│   ├── src/
-│   │   ├── services/
-│   │   │   ├── YieldKeeperService.ts
-│   │   │   ├── APYService.ts
-│   │   │   └── SafeService.ts
-│   │   └── index.ts
-│   └── env.example
-├── frontend/                  # React/Next.js UI
-│   ├── app/
-│   │   ├── components/        # React components
-│   │   ├── hooks/             # Custom hooks
-│   │   ├── providers/         # Context providers
-│   │   └── page.tsx
-│   └── env.example
-└── README.md
-```
 
 ## 🔧 Smart Contracts
 
@@ -171,8 +140,8 @@ The keeper service monitors APY rates and automatically rebalances funds when pr
   minRebalanceThreshold: 30,    // basis points
   maxGasCostThreshold: 10,      // basis points  
   checkInterval: 30,            // minutes
-  rpcUrl: "https://mainnet.base.org",
-  safeAddress: "0x...",         // Your Safe wallet
+  rpcUrl: "https://sepolia.base.org",
+  safeAddress: "0x...",         // Your Safe wallet or opted in
   vaultAddress: "0x..."         // Deployed vault
 }
 ```
@@ -292,18 +261,6 @@ Track key metrics:
 - User adoption and retention
 - Gas costs and optimization efficiency
 
-## 🔍 Monitoring & Alerts
-
-### Health Checks
-- Keeper service uptime monitoring
-- Smart contract function availability
-- Protocol APY data freshness
-- Gas price tracking for cost optimization
-
-### Notifications
-- Discord/Slack webhooks for rebalancing events
-- Email alerts for system errors
-- Dashboard notifications for users
 
 ## 🛠️ Development
 
@@ -320,26 +277,6 @@ Track key metrics:
 uint256 public constant MIN_REBALANCE_THRESHOLD = 30; // Adjustable
 uint256 public constant MAX_GAS_COST_THRESHOLD = 10;   // Adjustable
 ```
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit changes (`git commit -m 'Add amazing feature'`)
-4. Push to branch (`git push origin feature/amazing-feature`)
-5. Open Pull Request
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🙏 Acknowledgments
-
-- **Aave Protocol** for lending infrastructure
-- **Morpho Labs** for capital-efficient lending
-- **Moonwell** for cross-chain lending
-- **Safe** for account abstraction
-- **Base** for L2 infrastructure
 
 
 ### Contract Deployments

@@ -19,7 +19,11 @@ Before deployment, ensure you have:
 ```bash
 git clone <repository-url>
 cd assign-elsa
-npm run install:all
+
+# Install dependencies with compatibility fixes
+cd frontend && npm install
+cd ../keeper && npm install 
+cd ../contracts && npm install
 ```
 
 ### 1.2 Configure Environment Variables
@@ -86,10 +90,25 @@ npx hardhat run scripts/deploy.ts --network baseSepolia
 npx hardhat run scripts/deploy.ts --network base
 ```
 
-### 2.4 Verify Contracts
+### 2.4 Deploy Safe4337 Infrastructure
+```bash
+# Deploy Safe wallet factory and session key manager
+npx hardhat run scripts/deploy-safe4337.ts --network baseSepolia
+```
+
+**Expected Output:**
+```
+SessionKeyManager deployed to: 0xdef...456
+SafeWalletFactory deployed to: 0x789...abc
+Safe4337Module enabled: 0xa581c4A4DB7175302464fF3C06380BC3270b4037
+```
+
+### 2.5 Verify Contracts
 ```bash
 # Verify on BaseScan for transparency
-npx hardhat verify --network base <VAULT_ADDRESS> <USDC_ADDRESS> "USDC Yield Vault" "yUSDC"
+npx hardhat verify --network baseSepolia <VAULT_ADDRESS> <USDC_ADDRESS> "USDC Yield Vault" "yUSDC"
+npx hardhat verify --network baseSepolia <SESSION_KEY_MANAGER_ADDRESS>
+npx hardhat verify --network baseSepolia <SAFE_WALLET_FACTORY_ADDRESS>
 ```
 
 **Expected Output:**
@@ -98,6 +117,8 @@ USDCYieldVault deployed to: 0x123...abc
 AaveAdapter deployed to: 0x456...def
 MorphoAdapter deployed to: 0x789...ghi
 MoonwellAdapter deployed to: 0xabc...123
+SessionKeyManager deployed to: 0xdef...456
+SafeWalletFactory deployed to: 0x789...abc
 ```
 
 ## Step 3: Update Configuration
@@ -109,9 +130,12 @@ VAULT_ADDRESS=0x123...abc  # Use actual deployed vault address
 ```
 
 ### 3.2 Update Frontend Configuration
-Edit `frontend/.env.local` with deployed contract address:
+Edit `frontend/.env.local` with deployed contract addresses:
 ```bash
 NEXT_PUBLIC_VAULT_ADDRESS=0x123...abc  # Use actual deployed vault address
+NEXT_PUBLIC_SAFE_WALLET_FACTORY=0x789...abc  # SafeWalletFactory address
+NEXT_PUBLIC_SESSION_KEY_MANAGER=0xdef...456  # SessionKeyManager address
+NEXT_PUBLIC_PIMLICO_API_KEY=your_pimlico_api_key  # For bundler services
 ```
 
 ## Step 4: Safe Wallet Setup (Account Abstraction)
@@ -165,113 +189,6 @@ npm run dev
 npm run build
 vercel --prod
 ```
-
-## Step 6: Verification and Testing
-
-### 6.1 Verify Contract Deployment
-- [ ] Vault contract deployed and verified on BaseScan
-- [ ] All three adapters connected to vault
-- [ ] Vault can interact with each protocol
-
-### 6.2 Test Keeper Service
-- [ ] Keeper successfully connects to Safe wallet
-- [ ] APY data being fetched correctly
-- [ ] Rebalancing logic working (test with small amounts)
-
-### 6.3 Test Frontend
-- [ ] Wallet connection works
-- [ ] APY data displays correctly
-- [ ] Deposit/withdrawal functions work
-- [ ] Auto-yield toggle works
-
-## Step 7: Production Configuration
-
-### 7.1 Security Checklist
-- [ ] Private keys secured (use hardware wallet if possible)
-- [ ] Safe wallet has appropriate owners and threshold
-- [ ] Keeper permissions limited to rebalance function only
-- [ ] All contracts verified on BaseScan
-- [ ] Emergency pause functionality tested
-
-### 7.2 Monitoring Setup
-- [ ] Keeper service monitoring (uptime alerts)
-- [ ] Discord/Slack webhooks configured
-- [ ] Gas price monitoring
-- [ ] APY data freshness alerts
-
-### 7.3 User Documentation
-- [ ] User guide for depositing/withdrawing
-- [ ] Documentation for enabling auto-yield
-- [ ] FAQ and troubleshooting guide
-- [ ] Links to verified contracts
-
-## Common Issues and Solutions
-
-### Issue: Contract deployment fails
-**Solution:** 
-- Check you have sufficient Base ETH for gas
-- Verify RPC URL is correct
-- Ensure private key format is correct (without 0x prefix)
-
-### Issue: Keeper can't connect to Safe
-**Solution:**
-- Verify Safe address is correct
-- Ensure keeper address has appropriate permissions
-- Check Safe is on the correct network (Base)
-
-### Issue: APY data not loading
-**Solution:**
-- Verify protocol addresses in adapters
-- Check RPC URL connectivity
-- Ensure external API endpoints are accessible
-
-### Issue: Frontend wallet connection fails
-**Solution:**
-- Verify WalletConnect project ID
-- Check network configuration (Base = chainId 8453)
-- Ensure contract addresses are correct
-
-## Gas Optimization Tips
-
-1. **Batch Operations**: Deploy all contracts in single transaction when possible
-2. **Rebalance Timing**: Monitor gas prices and rebalance during low-fee periods
-3. **Threshold Tuning**: Adjust rebalance thresholds based on gas costs
-4. **Safe Configuration**: Use 1-of-1 Safe for cheaper automated transactions
-
-## Maintenance
-
-### Regular Tasks
-- [ ] Monitor keeper service uptime
-- [ ] Review rebalancing performance
-- [ ] Update APY data sources if needed
-- [ ] Check contract security updates
-- [ ] Update frontend dependencies
-
-### Monthly Reviews
-- [ ] Analyze yield optimization performance
-- [ ] Review gas cost efficiency
-- [ ] Update protocol parameters if needed
-- [ ] Security audit for any changes
-
-## Support
-
-For deployment issues or questions:
-
-1. Check the main README.md for detailed documentation
-2. Review contract tests for expected behavior
-3. Join our Discord/Telegram for community support
-4. Submit GitHub issues for bugs or feature requests
-
-## Next Steps
-
-After successful deployment:
-
-1. **User Acquisition**: Share with DeFi communities
-2. **Protocol Integration**: Add more lending protocols
-3. **Advanced Features**: Implement cross-chain optimization
-4. **Analytics**: Set up comprehensive dashboards
-5. **Security**: Schedule regular audits
-
 ---
 
 **⚠️ Important**: This is a proof-of-concept. Conduct thorough testing and security audits before deploying significant funds.

@@ -86,7 +86,10 @@ For complete implementation details, see **[SAFE4337_README.md](./SAFE4337_READM
 
 2. **Install dependencies**
    ```bash
-   npm run install:all
+   # Install all project dependencies
+   cd frontend && npm install
+   cd ../keeper && npm install 
+   cd ../contracts && npm install
    ```
 
 3. **Set up environment variables**
@@ -99,21 +102,26 @@ For complete implementation details, see **[SAFE4337_README.md](./SAFE4337_READM
    # Edit the .env files with your configuration
    ```
 
-4. **Deploy smart contracts**
+4. **Deploy smart contracts (Base Sepolia)**
    ```bash
    cd contracts
    npm run compile
-   npm run deploy
+   npm run deploy:sepolia
    ```
 
-5. **Start the keeper service**
+5. **Deploy Safe4337 infrastructure**
+   ```bash
+   npx hardhat run scripts/deploy-safe4337.ts --network baseSepolia
+   ```
+
+6. **Start the keeper service**
    ```bash
    cd keeper
    npm run build
    npm start
    ```
 
-6. **Launch the frontend**
+7. **Launch the frontend**
    ```bash
    cd frontend
    npm run dev
@@ -314,6 +322,21 @@ uint256 public constant MAX_GAS_COST_THRESHOLD = 10;   // Adjustable
 | **TestnetMorphoAdapter** | `0xB438f6DA411D17472AF1735511f9296E5C9341AF` | [BaseScan ↗](https://sepolia.basescan.org/address/0xB438f6DA411D17472AF1735511f9296E5C9341AF) |
 | **TestnetMoonwellAdapter** | `0x9258CB7AC8DcC2456C340837EEbA0926A06DE2D7` | [BaseScan ↗](https://sepolia.basescan.org/address/0x9258CB7AC8DcC2456C340837EEbA0926A06DE2D7) |
 | **USDC (Sepolia)** | `0x036CbD53842c5426634e7929541eC2318f3dCF7e` | [BaseScan ↗](https://sepolia.basescan.org/address/0x036CbD53842c5426634e7929541eC2318f3dCF7e) |
+
+
+### Project Status
+
+#### ✅ **Completed Features**
+- ✅ ERC-4626 compliant vault with rebalancing
+- ✅ Protocol adapters for Aave, Morpho, Moonwell (testnet mocks)
+- ✅ Safe4337 smart wallet integration
+- ✅ Session key management with rebalance-only permissions  
+- ✅ Frontend with wallet connection and yield dashboard
+- ✅ Keeper service with automated rebalancing
+- ✅ Real-time UI updates for Safe operations
+- ✅ Comprehensive testing (unit, fuzz, security)
+- ✅ Complete documentation and deployment guides
+
 ---
 
 **⚠️ Disclaimer**: This is a proof-of-concept for educational purposes. Use at your own risk. Always audit smart contracts before mainnet deployment.

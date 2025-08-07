@@ -342,7 +342,14 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - **Base** for L2 infrastructure
 
 
-### Base Sepolia Contract Link: https://sepolia.basescan.org/token/0x61b3B4A39A7607cce75eEda58d6cf01Eddcd344f
+### Contract Deployments
+| Contract | Address | Verification |
+|----------|---------|--------------|
+| **USDCYieldVault** | `0x61b3B4A39A7607cce75eEda58d6cf01Eddcd344f` | [BaseScan ↗](https://sepolia.basescan.org/address/0x61b3B4A39A7607cce75eEda58d6cf01Eddcd344f) |
+| **TestnetAaveAdapter** | `0x25e390f75320c7E88337e3945dcD68E6F0ca02ed` | [BaseScan ↗](https://sepolia.basescan.org/address/0x25e390f75320c7E88337e3945dcD68E6F0ca02ed) |
+| **TestnetMorphoAdapter** | `0xB438f6DA411D17472AF1735511f9296E5C9341AF` | [BaseScan ↗](https://sepolia.basescan.org/address/0xB438f6DA411D17472AF1735511f9296E5C9341AF) |
+| **TestnetMoonwellAdapter** | `0x9258CB7AC8DcC2456C340837EEbA0926A06DE2D7` | [BaseScan ↗](https://sepolia.basescan.org/address/0x9258CB7AC8DcC2456C340837EEbA0926A06DE2D7) |
+| **USDC (Sepolia)** | `0x036CbD53842c5426634e7929541eC2318f3dCF7e` | [BaseScan ↗](https://sepolia.basescan.org/address/0x036CbD53842c5426634e7929541eC2318f3dCF7e) |
 ---
 
 **⚠️ Disclaimer**: This is a proof-of-concept for educational purposes. Use at your own risk. Always audit smart contracts before mainnet deployment.
